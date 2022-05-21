@@ -11,7 +11,7 @@
     <string name="play_services">Play services</string>
     <string name="play_store">Play Store</string>
 <!--    <string name="google_settings">Google services &amp; preferences</string>-->
-    <string name="google_settings">Google settings</string>
+    <string name="google_settings">Google Settings</string>
     <string name="component_system_settings">%s app info</string>
     <string name="gms_network_location_opt_in">Google Location Accuracy</string>
     <string name="no_gms_network_location">
@@ -38,9 +38,7 @@ If you decide to keep it disabled, consider enabling “%2$s“ option to improv
 "Location service assisted by Bluetooth scanning requires the “Nearby devices“ permission."
     </string>
     <string name="always_on_scanning_settings">Always-on scanning settings</string>
-    <string name="always_on_wifi_scanning_enabled_but_disallowed">Always-on Wi-Fi scanning is enabled, but not allowed (no Location permission).</string>
     <string name="always_on_wifi_scanning_disabled">Always-on Wi-Fi scanning is disabled.</string>
-    <string name="always_on_bluetooth_scanning_enabled_but_disallowed">Always-on Bluetooth scanning is enabled, but not allowed (no “Nearby devices“ permission).</string>
     <string name="always_on_bluetooth_scanning_disabled">Always-on Bluetooth scanning is disabled.</string>
 
     <string name="push_notifications">Push notifications</string>
@@ -58,6 +56,15 @@ To receive them quicker, set “Battery usage“ to “Unrestricted“ in Play s
 "Play services needs the “Nearby devices“ permission to enable Exposure Notifications"
     </string>
 
+    <string name="missing_permission_nearby_NearbyShare">
+"Play services needs the “Nearby devices“ permission to enable Nearby Share"
+    </string>
+
     <string name="missing_play_games_app">This game needs the Play Games app</string>
     <string name="install">Install</string>
+
+    <string name="notif_channel_bg_activity_start">Request to show a screen</string>
+    <string name="notif_bg_activity_start">%s needs to show a screen. Tap to allow</string>
+
+    <string name="notif_missing_nearby_devices_perm_generic">%s needs the “Nearby devices“ permission</string>
 </resources>

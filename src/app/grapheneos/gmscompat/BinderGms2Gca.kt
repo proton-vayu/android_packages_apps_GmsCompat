@@ -1,6 +1,7 @@
 package app.grapheneos.gmscompat
 
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
@@ -14,8 +15,6 @@ object BinderGms2Gca : IGms2Gca.Stub() {
     private val boundProcesses = ArrayMap<IBinder, String>(10)
 
     fun connect(pkg: String, processName: String, callerBinder: IBinder) {
-        logd{"callingPkg $pkg processName $processName callingPid ${Binder.getCallingPid()}"}
-
         val deathRecipient = DeathRecipient(callerBinder)
         try {
             // important to add before linkToDeath() to avoid race with binderDied() callback
@@ -26,7 +25,7 @@ object BinderGms2Gca : IGms2Gca.Stub() {
             deathRecipient.binderDied()
             return
         }
-        PersistentFgService.start(pkg)
+        PersistentFgService.start(pkg, processName);
     }
 
     class DeathRecipient(val binder: IBinder) : IBinder.DeathRecipient {
@@ -87,7 +86,7 @@ object BinderGms2Gca : IGms2Gca.Stub() {
         val ctx = App.ctx()
         val intent = ctx.packageManager.getLaunchIntentForPackage(GmsInfo.PACKAGE_PLAY_STORE)
         val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-        Notifications.Channel.PLAY_STORE_PENDING_USER_ACTION.notifBuilder()
+        Notifications.builder(Notifications.CH_PLAY_STORE_PENDING_USER_ACTION)
                 .setSmallIcon(R.drawable.ic_pending_action)
                 .setContentTitle(ctx.getText(R.string.play_store_pending_user_action_notif))
                 .setContentIntent(pendingIntent)
@@ -103,11 +102,49 @@ object BinderGms2Gca : IGms2Gca.Stub() {
         val ctx = App.ctx()
 
         Notifications.configurationRequired(
-                Notifications.Channel.MISSING_PERMISSION,
+                Notifications.CH_MISSING_PERMISSION,
                 ctx.getText(R.string.missing_permission),
                 ctx.getText(R.string.play_store_missing_obb_permission_notif),
                 ctx.getText(R.string.open_settings),
                 playStoreSettings()
         ).show(Notifications.ID_PLAY_STORE_MISSING_OBB_PERMISSION)
+    }
+
+    override fun startActivityFromTheBackground(callerPkg: String, intent: PendingIntent) {
+        val ctx = App.ctx()
+        Notifications.builder(Notifications.CH_BACKGROUND_ACTIVITY_START)
+                .setSmallIcon(R.drawable.ic_configuration_required)
+                .setContentTitle(ctx.getString(R.string.notif_bg_activity_start, applicationLabel(ctx, callerPkg)))
+                .setContentIntent(intent)
+                .setAutoCancel(true)
+                .show(Notifications.generateUniqueNotificationId())
+    }
+
+    override fun showGmsCoreMissingPermissionForNearbyShareNotification() {
+        val ctx = App.ctx();
+
+        Notifications.configurationRequired(
+                Notifications.CH_MISSING_PERMISSION,
+                ctx.getText(R.string.missing_permission),
+                ctx.getText(R.string.missing_permission_nearby_NearbyShare),
+                ctx.getText(R.string.open_settings),
+                gmsCoreSettings()
+        ).show(Notifications.ID_GMS_CORE_MISSING_NEARBY_DEVICES_PERMISSION)
+    }
+
+    override fun showGmsMissingNearbyDevicesPermissionGeneric(callerPkg: String) {
+        val ctx = App.ctx()
+        Notifications.configurationRequired(
+                Notifications.CH_MISSING_PERMISSION,
+                ctx.getText(R.string.missing_permission),
+                ctx.getString(R.string.notif_missing_nearby_devices_perm_generic, applicationLabel(ctx, callerPkg)),
+                ctx.getText(R.string.open_settings),
+                appSettingsIntent(callerPkg)
+        ).show(Notifications.ID_MISSING_NEARBY_DEVICES_PERMISSION_GENERIC)
+    }
+
+    private fun applicationLabel(ctx: Context, pkg: String): CharSequence {
+        val pm = ctx.packageManager
+        return pm.getApplicationLabel(pm.getApplicationInfo(pkg, 0))
     }
 }

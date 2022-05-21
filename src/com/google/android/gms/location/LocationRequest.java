@@ -16,13 +16,24 @@ public class LocationRequest extends SpReadOnly {
 
     @Property(1) public int priority;
     @Property(2) public long interval;
-    @Property(3) public long fastestInterval;
-    @Property(4) public boolean explicitFastestInterval;
-    @Property(5) public long expirationTime;
-    @Property(6) public int numUpdates;
-    @Property(7) public float smallestDesplacement;
-    @Property(8) public long maxWaitTime;
+    @Property(3) public long minUpdateIntervalMillis;
+    @Property(5) public long expirationTime = Long.MAX_VALUE;
+    @Property(6) public int maxUpdates;
+    @Property(7) public float minUpdateDistanceMeters;
+    @Property(8) public long maxUpdateDelayMillis;
     @Property(9) public boolean waitForAccurateLocation;
+    @Property(10) public long durationMillis = Long.MAX_VALUE;
+
+    /*
+    unused for now:
+
+    @Property(11) public long maxUpdateAgeMillis = -1L;
+    @Property(12) public int granularity;
+    @Property(13) public int throttleBehavior;
+    @Property(14) public String moduleId;
+    @Property(15) public boolean bypass;
+    @Property(16) public WorkSource workSource;
+     */
 
 // SafeParcel code block generated with Spoon | START
     public static final Parcelable.Creator<LocationRequest> CREATOR = new Parcelable.Creator<LocationRequest>() {
@@ -39,25 +50,25 @@ public class LocationRequest extends SpReadOnly {
                         o.interval = SafeParcel.readLong(ph, p);
                         continue;
                     case 3 :
-                        o.fastestInterval = SafeParcel.readLong(ph, p);
-                        continue;
-                    case 4 :
-                        o.explicitFastestInterval = SafeParcel.readBoolean(ph, p);
+                        o.minUpdateIntervalMillis = SafeParcel.readLong(ph, p);
                         continue;
                     case 5 :
                         o.expirationTime = SafeParcel.readLong(ph, p);
                         continue;
                     case 6 :
-                        o.numUpdates = SafeParcel.readInt(ph, p);
+                        o.maxUpdates = SafeParcel.readInt(ph, p);
                         continue;
                     case 7 :
-                        o.smallestDesplacement = SafeParcel.readFloat(ph, p);
+                        o.minUpdateDistanceMeters = SafeParcel.readFloat(ph, p);
                         continue;
                     case 8 :
-                        o.maxWaitTime = SafeParcel.readLong(ph, p);
+                        o.maxUpdateDelayMillis = SafeParcel.readLong(ph, p);
                         continue;
                     case 9 :
                         o.waitForAccurateLocation = SafeParcel.readBoolean(ph, p);
+                        continue;
+                    case 10 :
+                        o.durationMillis = SafeParcel.readLong(ph, p);
                         continue;
                     default :
                         SafeParcel.skipProp(ph, p);
