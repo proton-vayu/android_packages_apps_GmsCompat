@@ -15,7 +15,7 @@ import com.android.internal.gmscompat.dynamite.server.IFileProxyService
 object BinderGms2Gca : IGms2Gca.Stub() {
     private val boundProcesses = ArrayMap<IBinder, String>(10)
 
-    override fun connect(pkg: String, processName: String, callerBinder: IBinder) {
+    fun connect(pkg: String, processName: String, callerBinder: IBinder) {
         val deathRecipient = DeathRecipient(callerBinder)
         try {
             // important to add before linkToDeath() to avoid race with binderDied() callback
@@ -65,6 +65,10 @@ object BinderGms2Gca : IGms2Gca.Stub() {
         }
     }
 
+    override fun connectGsf(processName: String, callerBinder: IBinder) {
+        connect(GmsInfo.PACKAGE_GSF, processName, callerBinder)
+    }
+
     @Volatile
     var dynamiteFileProxyService: IFileProxyService? = null
 
@@ -73,6 +77,10 @@ object BinderGms2Gca : IGms2Gca.Stub() {
             dynamiteFileProxyService = fileProxyService
         }
         connect(GmsInfo.PACKAGE_GMS_CORE, processName, callerBinder)
+    }
+
+    override fun connectPlayStore(processName: String, callerBinder: IBinder) {
+        connect(GmsInfo.PACKAGE_PLAY_STORE, processName, callerBinder)
     }
 
     override fun showPlayStorePendingUserActionNotification() {
